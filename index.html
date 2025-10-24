@@ -339,7 +339,8 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
   const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
   const APPWRITE_COLLECTION_ID = 'free_items_details_';
- const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
+  // 🚨 NEW: Replace 'YOUR_STORAGE_BUCKET_ID_HERE' with your actual Bucket ID from Appwrite Console
+  const APPWRITE_BUCKET_ID = 'YOUR_STORAGE_BUCKET_ID_HERE'; 
 
   const { Client, Databases, ID, Query, Storage } = Appwrite;
 
@@ -414,7 +415,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
           items = response.documents.map(doc => ({
               id: doc.$id,
               name: doc.name,
-              desc: doc.desc,
+              desc: doc.description, // NOTE: Changed from doc.desc to doc.description based on database
               category: doc.category,
               fileId: doc.fileId, // Appwrite file ID
               time: doc.$createdAt,
@@ -445,6 +446,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     items.forEach((item, index) => {
       const div = document.createElement("div");
       div.className = "item";
+      // Ensure getImageUrl uses the correct APPWRITE_BUCKET_ID now that it's defined
       const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
       
       div.innerHTML = `
@@ -503,7 +505,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
         if (file) {
             // 1. Upload File to Appwrite Storage
             const uploadedFile = await storage.createFile(
-                APPWRITE_BUCKET_ID,
+                APPWRITE_BUCKET_ID, // This is now defined
                 ID.unique(),
                 file
             );
@@ -513,17 +515,13 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
         // 2. Create Document in Appwrite Database
         const payload = {
             name,
-            desc,
+            // 🚨 FIXED: 'desc' changed to 'description' to match DB column name
+            description: desc, 
             category,
             fileId: fileId,
+            // 🚨 ADDED: Required 'datePosted' attribute
+            datePosted: new Date().toISOString(), 
         };
-
-     const uploadedFile = await storage.createFile(
-    APPWRITE_BUCKET_ID,
-    ID.unique(),
-    file
-);
-fileId = uploadedFile.$id;
 
         await databases.createDocument(
             APPWRITE_DATABASE_ID,
@@ -634,14 +632,6 @@ fileId = uploadedFile.$id;
   // Initial load of items and subscription setup
   getItems();
   subscribeToUpdates();
-
- function getImageUrl(fileId) {
-    return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/preview?project=${APPWRITE_PROJECT_ID}&quality=75`;
-}
-// ...
-const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
 </script>
 </body>
-
 </html>
-
