@@ -9,7 +9,6 @@
 <style>
   * {
     box-sizing: border-box;
-    /* Removed transition from * to improve performance, will apply selectively */
   }
   body {
     font-family: 'Poppins', sans-serif;
@@ -24,7 +23,7 @@
     --green-dark: #15803d;
     --accent: #22c55e;
     --bg: #f9fafb;
-    --card: rgba(255, 255, 255, 0.9); /* Slightly more opaque for better contrast */
+    --card: rgba(255, 255, 255, 0.9);
     --text: #111827;
   }
 
@@ -44,7 +43,7 @@
   }
 
   header h1 {
-    font-size: 3rem; /* Slightly larger heading */
+    font-size: 3rem;
     font-weight: 700;
     margin: 0;
   }
@@ -58,11 +57,11 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background: var(--card); /* Use card color for toggle */
+    background: var(--card);
     color: var(--green-dark);
     border: none;
     border-radius: 30px;
-    padding: 10px 18px; /* Slightly more padding */
+    padding: 10px 18px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -78,23 +77,23 @@
     max-width: 1000px;
     margin: -40px auto 50px;
     background: var(--card);
-    backdrop-filter: blur(15px); /* Stronger blur */
+    backdrop-filter: blur(15px);
     border-radius: 20px;
-    padding: 2.5rem; /* More padding */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Stronger shadow */
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
 
   h2 {
     color: var(--green-dark);
     margin-top: 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid rgba(22, 163, 74, 0.2); /* Separator */
+    border-bottom: 2px solid rgba(22, 163, 74, 0.2);
   }
 
   label {
     display: block;
     font-weight: 600;
-    margin-top: 15px; /* More vertical space */
+    margin-top: 15px;
     color: var(--text);
   }
 
@@ -103,7 +102,7 @@
   select,
   #searchBar {
     width: 100%;
-    padding: 14px; /* More padding */
+    padding: 14px;
     border-radius: 10px;
     border: 1px solid #d1d5db;
     background: var(--bg);
@@ -143,7 +142,7 @@
   }
 
   #preview {
-    width: 150px; /* Slightly larger preview */
+    width: 150px;
     height: 150px;
     border-radius: 12px;
     margin-top: 15px;
@@ -168,12 +167,12 @@
 
   .item {
     display: flex;
-    gap: 1.5rem; /* Increased gap */
+    gap: 1.5rem;
     background: var(--card);
     border-radius: 16px;
-    padding: 1.5rem; /* More padding */
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Lighter shadow */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     border: 1px solid rgba(22, 163, 74, 0.1);
     transform: translateY(10px);
     opacity: 0;
@@ -191,7 +190,7 @@
   }
 
   .item img {
-    width: 130px; /* Slightly larger item image */
+    width: 130px;
     height: 130px;
     border-radius: 12px;
     object-fit: cover;
@@ -246,7 +245,7 @@
       margin-top: 10px;
       border-radius: 8px;
       font-weight: 600;
-      display: none; /* Hidden by default */
+      display: none;
   }
   
   .status-message.success {
@@ -335,12 +334,11 @@
 
 <script>
   // Appwrite Configuration - REPLACE THESE WITH YOUR ACTUAL IDS
-const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1'; 
+  const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';  
   const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
   const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
   const APPWRITE_COLLECTION_ID = 'free_items_details_';
-  // 🚨 NEW: Replace 'YOUR_STORAGE_BUCKET_ID_HERE' with your actual Bucket ID from Appwrite Console
-  const APPWRITE_BUCKET_ID = 'YOUR_STORAGE_BUCKET_ID_HERE'; 
+  const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
 
   const { Client, Databases, ID, Query, Storage } = Appwrite;
 
@@ -364,7 +362,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   const themeToggle = document.getElementById("themeToggle");
   const postStatus = document.getElementById("postStatus");
 
-  let items = []; // Holds the list of items from Appwrite
+  let items = [];
 
   // --- Utility Functions ---
 
@@ -397,7 +395,6 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
           const filter = filterCategory.value;
 
           if (search) {
-              // Basic text search on name field
               queries.push(Query.search('name', search));
           }
 
@@ -415,10 +412,10 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
           items = response.documents.map(doc => ({
               id: doc.$id,
               name: doc.name,
-              desc: doc.description, // NOTE: Changed from doc.desc to doc.description based on database
+              desc: doc.description || doc.desc, // Uses 'description'
               category: doc.category,
-              fileId: doc.fileId, // Appwrite file ID
-              time: doc.$createdAt,
+              fileId: doc.fileId,
+              time: doc.datePosted || doc.$createdAt, // Uses 'datePosted'
           }));
           
           renderItems();
@@ -434,7 +431,6 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   // --- UI Rendering ---
 
   function renderItems() {
-    // Clear the list while maintaining the emptyText placeholder
     document.querySelectorAll(".item").forEach(e => e.remove());
 
     if (items.length === 0) {
@@ -446,7 +442,6 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
     items.forEach((item, index) => {
       const div = document.createElement("div");
       div.className = "item";
-      // Ensure getImageUrl uses the correct APPWRITE_BUCKET_ID now that it's defined
       const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
       
       div.innerHTML = `
@@ -503,24 +498,20 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
 
     try {
         if (file) {
-            // 1. Upload File to Appwrite Storage
             const uploadedFile = await storage.createFile(
-                APPWRITE_BUCKET_ID, // This is now defined
+                APPWRITE_BUCKET_ID,
                 ID.unique(),
                 file
             );
             fileId = uploadedFile.$id;
         }
 
-        // 2. Create Document in Appwrite Database
         const payload = {
             name,
-            // 🚨 FIXED: 'desc' changed to 'description' to match DB column name
-            description: desc, 
+            description: desc, // FIXED: Using 'description' to match Appwrite DB attribute
             category,
             fileId: fileId,
-            // 🚨 ADDED: Required 'datePosted' attribute
-            datePosted: new Date().toISOString(), 
+            datePosted: new Date().toISOString(), // FIXED: Added required 'datePosted' attribute
         };
 
         await databases.createDocument(
@@ -542,6 +533,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
         photoInput.value = null;
         submitButton.disabled = false;
         submitButton.textContent = 'Post Item';
+        getItems(); // Refresh the list
     }
   }
   
@@ -556,7 +548,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
               itemId
           );
 
-          // 2. Delete File (Optional, but good practice)
+          // 2. Delete File 
           if (itemToDelete && itemToDelete.fileId) {
               await storage.deleteFile(
                   APPWRITE_BUCKET_ID,
@@ -570,18 +562,13 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
           console.error("Error deleting item:", error);
           showStatus('error', 'Failed to remove item. Check console.');
       }
-      // Note: No need to call renderItems() here due to real-time subscription
   }
 
   // --- Real-time Updates ---
   function subscribeToUpdates() {
       client.subscribe(`databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_COLLECTION_ID}.documents`, response => {
-          // Automatically update the item list when a document is created, updated, or deleted
           if (response.events.includes("databases.*.collections.*.documents.*.create") ||
               response.events.includes("databases.*.collections.*.documents.*.delete")) {
-              
-              // Only re-fetch and re-render if the change is relevant to the current filters/search
-              // A simpler, more reliable approach for this size app is to re-fetch all items.
               getItems(); 
           }
       });
@@ -634,4 +621,5 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   subscribeToUpdates();
 </script>
 </body>
+
 </html>
