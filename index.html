@@ -339,6 +339,7 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
   const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
   const APPWRITE_COLLECTION_ID = 'free_items_details_';
+ const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
 
   const { Client, Databases, ID, Query, Storage } = Appwrite;
 
@@ -517,6 +518,13 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
             fileId: fileId,
         };
 
+     const uploadedFile = await storage.createFile(
+    APPWRITE_BUCKET_ID,
+    ID.unique(),
+    file
+);
+fileId = uploadedFile.$id;
+
         await databases.createDocument(
             APPWRITE_DATABASE_ID,
             APPWRITE_COLLECTION_ID,
@@ -626,7 +634,14 @@ const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
   // Initial load of items and subscription setup
   getItems();
   subscribeToUpdates();
+
+ function getImageUrl(fileId) {
+    return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/preview?project=${APPWRITE_PROJECT_ID}&quality=75`;
+}
+// ...
+const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
 </script>
 </body>
 
 </html>
+
