@@ -7,636 +7,642 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/appwrite@13.0.0"></script>
 <style>
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    transition: background 0.5s ease, color 0.5s ease;
-  }
+  * {
+    box-sizing: border-box;
+    /* Removed transition from * to improve performance, will apply selectively */
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.5s ease, color 0.5s ease;
+  }
 
-  :root {
-    --green: #16a34a;
-    --green-dark: #15803d;
-    --accent: #22c55e;
-    --bg: #f9fafb;
-    --card: rgba(255, 255, 255, 0.9);
-    --text: #111827;
-  }
+  :root {
+    --green: #16a34a;
+    --green-dark: #15803d;
+    --accent: #22c55e;
+    --bg: #f9fafb;
+    --card: rgba(255, 255, 255, 0.9); /* Slightly more opaque for better contrast */
+    --text: #111827;
+  }
 
-  body.dark {
-    --bg: #0f172a;
-    --card: rgba(30, 41, 59, 0.9);
-    --text: #f9fafb;
-  }
+  body.dark {
+    --bg: #0f172a;
+    --card: rgba(30, 41, 59, 0.9);
+    --text: #f9fafb;
+  }
 
-  header {
-    background: linear-gradient(120deg, var(--green-dark), var(--accent), #86efac);
-    color: white;
-    text-align: center;
-    padding: 3rem 1rem 2rem;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+  header {
+    background: linear-gradient(120deg, var(--green-dark), var(--accent), #86efac);
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
 
-  header h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-  }
+  header h1 {
+    font-size: 3rem; /* Slightly larger heading */
+    font-weight: 700;
+    margin: 0;
+  }
 
-  header p {
-    font-weight: 500;
-    opacity: 0.9;
-  }
+  header p {
+    font-weight: 500;
+    opacity: 0.9;
+  }
 
-  #themeToggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: var(--card);
-    color: var(--green-dark);
-    border: none;
-    border-radius: 30px;
-    padding: 10px 18px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
+  #themeToggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--card); /* Use card color for toggle */
+    color: var(--green-dark);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 18px; /* Slightly more padding */
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
 
-  #themeToggle:hover {
-    background: var(--green);
-    color: white;
-  }
+  #themeToggle:hover {
+    background: var(--green);
+    color: white;
+  }
 
-  .container {
-    max-width: 1000px;
-    margin: -40px auto 50px;
-    background: var(--card);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  }
+  .container {
+    max-width: 1000px;
+    margin: -40px auto 50px;
+    background: var(--card);
+    backdrop-filter: blur(15px); /* Stronger blur */
+    border-radius: 20px;
+    padding: 2.5rem; /* More padding */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Stronger shadow */
+  }
 
-  h2 {
-    color: var(--green-dark);
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid rgba(22, 163, 74, 0.2);
-  }
+  h2 {
+    color: var(--green-dark);
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(22, 163, 74, 0.2); /* Separator */
+  }
 
-  label {
-    display: block;
-    font-weight: 600;
-    margin-top: 15px;
-    color: var(--text);
-  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-top: 15px; /* More vertical space */
+    color: var(--text);
+  }
 
-  input[type="text"],
-  textarea,
-  select,
-  #searchBar {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 1rem;
-    margin-top: 5px;
-    transition: border-color 0.3s ease, background 0.3s ease;
-  }
-  
-  input:focus, textarea:focus, select:focus, #searchBar:focus {
-      border-color: var(--green);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
-  }
+  input[type="text"],
+  textarea,
+  select,
+  #searchBar {
+    width: 100%;
+    padding: 14px; /* More padding */
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+    margin-top: 5px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  
+  input:focus, textarea:focus, select:focus, #searchBar:focus {
+      border-color: var(--green);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+  }
 
-  input[type="file"] {
-    margin-top: 10px;
-    padding: 10px 0;
-  }
+  input[type="file"] {
+    margin-top: 10px;
+    padding: 10px 0;
+  }
 
-  button[type="submit"], .actions button {
-    background: var(--green);
-    border: none;
-    color: white;
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 10px;
-    margin-top: 15px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
+  button[type="submit"], .actions button {
+    background: var(--green);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
 
-  button[type="submit"]:hover, .actions button:hover {
-    background: var(--green-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  }
+  button[type="submit"]:hover, .actions button:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
 
-  #preview {
-    width: 150px;
-    height: 150px;
-    border-radius: 12px;
-    margin-top: 15px;
-    object-fit: cover;
-    display: none;
-    border: 2px solid var(--accent);
-  }
+  #preview {
+    width: 150px; /* Slightly larger preview */
+    height: 150px;
+    border-radius: 12px;
+    margin-top: 15px;
+    object-fit: cover;
+    display: none;
+    border: 2px solid var(--accent);
+  }
 
-  #searchBar {
-    margin-bottom: 10px;
-  }
+  #searchBar {
+    margin-bottom: 10px;
+  }
 
-  .filter {
-    margin-top: 15px;
-    display: flex;
-    justify-content: flex-end;
-  }
+  .filter {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+  }
 
-  .item-list {
-    margin-top: 2rem;
-  }
+  .item-list {
+    margin-top: 2rem;
+  }
 
-  .item {
-    display: flex;
-    gap: 1.5rem;
-    background: var(--card);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    border: 1px solid rgba(22, 163, 74, 0.1);
-    transform: translateY(10px);
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+  .item {
+    display: flex;
+    gap: 1.5rem; /* Increased gap */
+    background: var(--card);
+    border-radius: 16px;
+    padding: 1.5rem; /* More padding */
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Lighter shadow */
+    border: 1px solid rgba(22, 163, 74, 0.1);
+    transform: translateY(10px);
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
 
-  .item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  }
+  .item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  }
 
-  @keyframes fadeIn {
-    to { transform: translateY(0); opacity: 1; }
-  }
+  @keyframes fadeIn {
+    to { transform: translateY(0); opacity: 1; }
+  }
 
-  .item img {
-    width: 130px;
-    height: 130px;
-    border-radius: 12px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
+  .item img {
+    width: 130px; /* Slightly larger item image */
+    height: 130px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
 
-  .item-content {
-    flex: 1;
-    min-width: 200px;
-  }
+  .item-content {
+    flex: 1;
+    min-width: 200px;
+  }
 
-  .item h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.5rem;
-    color: var(--green-dark);
-  }
+  .item h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.5rem;
+    color: var(--green-dark);
+  }
 
-  .item small {
-    color: #6b7280;
-    display: block;
-    margin-bottom: 10px;
-  }
+  .item small {
+    color: #6b7280;
+    display: block;
+    margin-bottom: 10px;
+  }
 
-  .item p {
-    margin: 5px 0 15px;
-  }
+  .item p {
+    margin: 5px 0 15px;
+  }
 
-  .actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
 
-  .remove-btn {
-    background: #dc2626;
-  }
+  .remove-btn {
+    background: #dc2626;
+  }
 
-  .remove-btn:hover {
-    background: #b91c1c;
-  }
+  .remove-btn:hover {
+    background: #b91c1c;
+  }
 
-  .share-btn {
-    background: #2563eb;
-  }
+  .share-btn {
+    background: #2563eb;
+  }
 
-  .share-btn:hover {
-    background: #1d4ed8;
-  }
-  
-  .status-message {
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      font-weight: 600;
-      display: none;
-  }
-  
-  .status-message.success {
-      background-color: #dcfce7;
-      color: #15803d;
-  }
-  
-  .status-message.error {
-      background-color: #fee2e2;
-      color: #b91c1c;
-  }
+  .share-btn:hover {
+    background: #1d4ed8;
+  }
+  
+  .status-message {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none; /* Hidden by default */
+  }
+  
+  .status-message.success {
+      background-color: #dcfce7;
+      color: #15803d;
+  }
+  
+  .status-message.error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+  }
 
-  footer {
-    text-align: center;
-    padding: 30px;
-    color: #6b7280;
-  }
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: #6b7280;
+  }
 
-  @media (max-width: 700px) {
-    .item {
-      flex-direction: column;
-      text-align: center;
-      align-items: center;
-    }
-    .item-content { text-align: center; }
-  }
+  @media (max-width: 700px) {
+    .item {
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+    }
+    .item-content { text-align: center; }
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>The Givers' Spot</h1>
-  <p>Give what you can, take what you need 🌱</p>
-  <button id="themeToggle">🌙 Dark Mode</button>
+  <h1>The Givers' Spot</h1>
+  <p>Give what you can, take what you need 🌱</p>
+  <button id="themeToggle">🌙 Dark Mode</button>
 </header>
 
 <div class="container">
-  <h2>➕ Post an Item</h2>
-  <form id="itemForm">
-    <label>Item Name</label>
-    <input type="text" id="itemName" placeholder="e.g. Wooden Chair" required>
+  <h2>➕ Post an Item</h2>
+  <form id="itemForm">
+    <label>Item Name</label>
+    <input type="text" id="itemName" placeholder="e.g. Wooden Chair" required>
 
-    <label>Description</label>
-    <textarea id="itemDesc" rows="4" placeholder="Condition, pickup, etc." required></textarea>
+    <label>Description</label>
+    <textarea id="itemDesc" rows="4" placeholder="Condition, pickup, etc." required></textarea>
 
-    <label>Category</label>
-    <select id="itemCategory">
-      <option>Books 📚</option>
-      <option>Clothing 👕</option>
-      <option>Toys 🧸</option>
-      <option>Electronics 🔌</option>
-      <option>Furniture 🪑</option>
-      <option>Other 🎁</option>
-    </select>
+    <label>Category</label>
+    <select id="itemCategory">
+      <option>Books 📚</option>
+      <option>Clothing 👕</option>
+      <option>Toys 🧸</option>
+      <option>Electronics 🔌</option>
+      <option>Furniture 🪑</option>
+      <option>Other 🎁</option>
+    </select>
 
-    <label>Photo (optional)</label>
-    <input type="file" id="itemPhoto" accept="image/*">
-    <img id="preview" alt="Preview">
+    <label>Photo (optional)</label>
+    <input type="file" id="itemPhoto" accept="image/*">
+    <img id="preview" alt="Preview">
 
-    <button type="submit">Post Item</button>
-    <div id="postStatus" class="status-message"></div>
-  </form>
+    <button type="submit">Post Item</button>
+    <div id="postStatus" class="status-message"></div>
+  </form>
 
-  <hr style="margin-top: 30px; border: 0; border-top: 1px solid #ccc;">
+  <hr style="margin-top: 30px; border: 0; border-top: 1px solid #ccc;">
 
-  <h2>✨ Available Items</h2>
-  <input type="text" id="searchBar" placeholder="🔍 Search items by name...">
-  <div class="filter">
-    <select id="filterCategory">
-      <option value="all">All Categories</option>
-      <option value="Books 📚">Books 📚</option>
-      <option value="Clothing 👕">Clothing 👕</option>
-      <option value="Toys 🧸">Toys 🧸</option>
-      <option value="Electronics 🔌">Electronics 🔌</option>
-      <option value="Furniture 🪑">Furniture 🪑</option>
-      <option value="Other 🎁">Other 🎁</option>
-    </select>
-  </div>
+  <h2>✨ Available Items</h2>
+  <input type="text" id="searchBar" placeholder="🔍 Search items by name...">
+  <div class="filter">
+    <select id="filterCategory">
+      <option value="all">All Categories</option>
+      <option value="Books 📚">Books 📚</option>
+      <option value="Clothing 👕">Clothing 👕</option>
+      <option value="Toys 🧸">Toys 🧸</option>
+      <option value="Electronics 🔌">Electronics 🔌</option>
+      <option value="Furniture 🪑">Furniture 🪑</option>
+      <option value="Other 🎁">Other 🎁</option>
+    </select>
+  </div>
 
-  <div class="item-list" id="itemList">
-    <p id="loadingText" style="text-align: center; font-style: italic; color: #6b7280;">Loading items...</p>
-    <p id="emptyText" style="display: none; text-align: center; font-style: italic; color: #6b7280;">No items yet. Post something to get started!</p>
-  </div>
+  <div class="item-list" id="itemList">
+    <p id="loadingText" style="text-align: center; font-style: italic; color: #6b7280;">Loading items...</p>
+    <p id="emptyText" style="display: none; text-align: center; font-style: italic; color: #6b7280;">No items yet. Post something to get started!</p>
+  </div>
 </div>
 
 <footer>© 2025 The Givers' Spot | Made with 💚 and Appwrite</footer>
 
 <script>
-  // Appwrite Configuration - REPLACE THESE WITH YOUR ACTUAL IDS
-  const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';  
-  const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
-  const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
-  const APPWRITE_COLLECTION_ID = 'free_items_details_';
-  const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
+  // Appwrite Configuration - REPLACE THESE WITH YOUR ACTUAL IDS
+  const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1'; 
+  const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
+  const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
+  const APPWRITE_COLLECTION_ID = 'free_items_details_';
+  // FIX: Added the missing APPWRITE_BUCKET_ID here (using the ID from previous context)
+  const APPWRITE_BUCKET_ID = '68faeb91003d29583348'; 
 
-  const { Client, Databases, ID, Query, Storage } = Appwrite;
+  const { Client, Databases, ID, Query, Storage } = Appwrite;
 
-  const client = new Client();
-  client
-    .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID);
+  const client = new Client();
+  client
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT_ID);
 
-  const databases = new Databases(client);
-  const storage = new Storage(client);
+  const databases = new Databases(client);
+  const storage = new Storage(client);
 
-  // --- DOM Elements ---
-  const form = document.getElementById("itemForm");
-  const itemList = document.getElementById("itemList");
-  const emptyText = document.getElementById("emptyText");
-  const loadingText = document.getElementById("loadingText");
-  const photoInput = document.getElementById("itemPhoto");
-  const preview = document.getElementById("preview");
-  const searchBar = document.getElementById("searchBar");
-  const filterCategory = document.getElementById("filterCategory");
-  const themeToggle = document.getElementById("themeToggle");
-  const postStatus = document.getElementById("postStatus");
+  // --- DOM Elements ---
+  const form = document.getElementById("itemForm");
+  const itemList = document.getElementById("itemList");
+  const emptyText = document.getElementById("emptyText");
+  const loadingText = document.getElementById("loadingText");
+  const photoInput = document.getElementById("itemPhoto");
+  const preview = document.getElementById("preview");
+  const searchBar = document.getElementById("searchBar");
+  const filterCategory = document.getElementById("filterCategory");
+  const themeToggle = document.getElementById("themeToggle");
+  const postStatus = document.getElementById("postStatus");
 
-  let items = [];
+  let items = []; // Holds the list of items from Appwrite
 
-  // --- Utility Functions ---
+  // --- Utility Functions ---
 
-  function showStatus(type, message) {
-      postStatus.className = `status-message ${type}`;
-      postStatus.textContent = message;
-      postStatus.style.display = 'block';
-      setTimeout(() => {
-          postStatus.style.display = 'none';
-      }, 3000);
-  }
+  function showStatus(type, message) {
+      postStatus.className = `status-message ${type}`;
+      postStatus.textContent = message;
+      postStatus.style.display = 'block';
+      setTimeout(() => {
+          postStatus.style.display = 'none';
+      }, 3000);
+  }
 
-  function getImageUrl(fileId) {
-      return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/preview?project=${APPWRITE_PROJECT_ID}&quality=75`;
-  }
+  function getImageUrl(fileId) {
+      return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/preview?project=${APPWRITE_PROJECT_ID}&quality=75`;
+  }
 
-  function formatTime(timestamp) {
-      const date = new Date(timestamp);
-      return date.toLocaleString();
-  }
+  function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString();
+  }
 
-  // --- Appwrite Logic ---
+  // --- Appwrite Logic ---
 
-  async function getItems() {
-      loadingText.style.display = 'block';
-      try {
-          // 1. Build Query Array
-          const queries = [Query.orderDesc('$createdAt')];
-          const search = searchBar.value.trim().toLowerCase();
-          const filter = filterCategory.value;
+  async function getItems() {
+      loadingText.style.display = 'block';
+      try {
+          // 1. Build Query Array
+          const queries = [Query.orderDesc('$createdAt')];
+          const search = searchBar.value.trim().toLowerCase();
+          const filter = filterCategory.value;
 
-          if (search) {
-              queries.push(Query.search('name', search));
-          }
+          if (search) {
+              // Basic text search on name field
+              queries.push(Query.search('name', search));
+          }
 
-          if (filter !== "all") {
-              queries.push(Query.equal('category', filter));
-          }
+          if (filter !== "all") {
+              queries.push(Query.equal('category', filter));
+          }
 
-          // 2. Fetch data from Appwrite
-          const response = await databases.listDocuments(
-              APPWRITE_DATABASE_ID,
-              APPWRITE_COLLECTION_ID,
-              queries
-          );
-          
-          items = response.documents.map(doc => ({
-              id: doc.$id,
-              name: doc.name,
-              // FIX: Using 'description' to match the database attribute
-              desc: doc.description || doc.desc, 
-              category: doc.category,
-              fileId: doc.fileId,
-              // FIX: Using 'datePosted'
-              time: doc.datePosted || doc.$createdAt, 
-          }));
-          
-          renderItems();
+          // 2. Fetch data from Appwrite
+          const response = await databases.listDocuments(
+              APPWRITE_DATABASE_ID,
+              APPWRITE_COLLECTION_ID,
+              queries
+          );
+          
+          items = response.documents.map(doc => ({
+              id: doc.$id,
+              name: doc.name,
+              desc: doc.desc, // FIXED: Using user's specified 'desc' attribute
+              category: doc.category,
+              fileId: doc.fileId, // Appwrite file ID
+              // FIXED: Using user's specified 'dat_posted' attribute
+              time: doc.dat_posted || doc.$createdAt, 
+          }));
+          
+          renderItems();
 
-      } catch (error) {
-          console.error("Error fetching items:", error);
-          loadingText.textContent = "Error loading items. Check console for details.";
-      } finally {
-          loadingText.style.display = 'none';
-      }
-  }
+      } catch (error) {
+          console.error("Error fetching items:", error);
+          loadingText.textContent = "Error loading items. Check console for details.";
+      } finally {
+          loadingText.style.display = 'none';
+      }
+  }
 
-  // --- UI Rendering ---
+  // --- UI Rendering ---
 
-  function renderItems() {
-    document.querySelectorAll(".item").forEach(e => e.remove());
+  function renderItems() {
+    // Clear the list while maintaining the emptyText placeholder
+    document.querySelectorAll(".item").forEach(e => e.remove());
 
-    if (items.length === 0) {
-      emptyText.style.display = "block";
-    } else {
-      emptyText.style.display = "none";
-    }
+    if (items.length === 0) {
+      emptyText.style.display = "block";
+    } else {
+      emptyText.style.display = "none";
+    }
 
-    items.forEach((item, index) => {
-      const div = document.createElement("div");
-      div.className = "item";
-      const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
-      
-      div.innerHTML = `
-        <img src="${imageUrl}" alt="${item.name}">
-        <div class="item-content">
-          <h3>${item.name}</h3>
-          <small>${item.category} • Posted on ${formatTime(item.time)}</small>
-          <p>${item.desc}</p>
-          <div class="actions">
-            <button class="share-btn" data-id="${item.id}">Share</button>
-            <button class="remove-btn" data-id="${item.id}">Remove</button>
-          </div>
-        </div>
-      `;
-      itemList.appendChild(div);
-    });
+    items.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "item";
+      const imageUrl = item.fileId ? getImageUrl(item.fileId) : 'https://via.placeholder.com/130?text=No+Photo';
+      
+      div.innerHTML = `
+        <img src="${imageUrl}" alt="${item.name}">
+        <div class="item-content">
+          <h3>${item.name}</h3>
+          <small>${item.category} • Posted on ${formatTime(item.time)}</small>
+          <p>${item.desc}</p>
+          <div class="actions">
+            <button class="share-btn" data-id="${item.id}">Share</button>
+            <button class="remove-btn" data-id="${item.id}">Remove</button>
+          </div>
+        </div>
+      `;
+      itemList.appendChild(div);
+    });
 
-    // Attach listeners for remove and share buttons
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-      btn.addEventListener("click", async (e) => {
-        const itemId = e.target.dataset.id;
-        if (confirm("Are you sure you want to remove this item?")) {
-            await removeItem(itemId);
-        }
-      });
-    });
+    // Attach listeners for remove and share buttons
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const itemId = e.target.dataset.id;
+        if (confirm("Are you sure you want to remove this item?")) {
+            await removeItem(itemId);
+        }
+      });
+    });
 
-    document.querySelectorAll(".share-btn").forEach(btn => {
-      btn.addEventListener("click", e => {
-        const item = items.find(i => i.id === e.target.dataset.id);
-        if (!item) return;
+    document.querySelectorAll(".share-btn").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const item = items.find(i => i.id === e.target.dataset.id);
+        if (!item) return;
 
-        const text = `🎁 ${item.name}\n${item.desc}\nCategory: ${item.category}\n-- Shared from The Givers' Spot`;
-        navigator.clipboard.writeText(text);
-        btn.textContent = "✅ Copied!";
-        setTimeout(() => btn.textContent = "Share", 1500);
-      });
-    });
-  }
+        const text = `🎁 ${item.name}\n${item.desc}\nCategory: ${item.category}\n-- Shared from The Givers' Spot`;
+        navigator.clipboard.writeText(text);
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => btn.textContent = "Share", 1500);
+      });
+    });
+  }
 
-  // --- Event Handlers ---
+  // --- Event Handlers ---
 
-  async function postItem(e) {
-    e.preventDefault();
-    const submitButton = form.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Posting...';
+  async function postItem(e) {
+    e.preventDefault();
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Posting...';
 
-    const name = document.getElementById("itemName").value.trim();
-    const desc = document.getElementById("itemDesc").value.trim();
-    const category = document.getElementById("itemCategory").value;
-    const file = photoInput.files[0];
-    let fileId = null;
+    const name = document.getElementById("itemName").value.trim();
+    const desc = document.getElementById("itemDesc").value.trim();
+    const category = document.getElementById("itemCategory").value;
+    const file = photoInput.files[0];
+    let fileId = null;
 
-    // --- ADDED: 5MB File Size Check ---
-    // यह Appwrite को भेजने से पहले बड़ी फ़ाइलों को रोकता है।
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB Limit in Bytes (अपने Appwrite बकेट के अनुसार बदलें)
+    // --- NEW FIX: 50MB File Size Check ---
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB Limit in Bytes
 
-    if (file && file.size > MAX_FILE_SIZE) {
-        showStatus('error', `फ़ाइल साइज़ बहुत बड़ा है। अधिकतम साइज़ ${MAX_FILE_SIZE / (1024 * 1024)}MB है।`);
-        submitButton.disabled = false;
-        submitButton.textContent = 'Post Item';
-        return; 
-    }
-    // --- End File Size Check ---
-
-    try {
-        if (file) {
-            // 1. Upload File to Appwrite Storage
-            const uploadedFile = await storage.createFile(
-                APPWRITE_BUCKET_ID,
-                ID.unique(),
-                file
-            );
-            fileId = uploadedFile.$id;
-        }
-
-        // 2. Create Document in Appwrite Database
-        const payload = {
-            name,
-            // FIX: 'description' attribute जोड़ा गया
-            description: desc, 
-            category,
-            fileId: fileId,
-            // FIX: 'datePosted' attribute जोड़ा गया
-            datePosted: new Date().toISOString(), 
-        };
-
-        await databases.createDocument(
-            APPWRITE_DATABASE_ID,
-            APPWRITE_COLLECTION_ID,
-            ID.unique(),
-            payload
-        );
-        
-        showStatus('success', 'Item posted successfully!');
-
-    } catch (error) {
-        console.error("Error posting item:", error);
-        showStatus('error', 'Failed to post item. Check console.');
-    } finally {
-        // Reset form and UI elements
-        form.reset();
-        preview.style.display = "none";
-        photoInput.value = null;
-        submitButton.disabled = false;
-        submitButton.textContent = 'Post Item';
-        getItems(); // Refresh the list
-    }
-  }
-  
-  async function removeItem(itemId) {
-      try {
-          const itemToDelete = items.find(i => i.id === itemId);
-
-          // 1. Delete Document
-          await databases.deleteDocument(
-              APPWRITE_DATABASE_ID,
-              APPWRITE_COLLECTION_ID,
-              itemId
-          );
-
-          // 2. Delete File 
-          if (itemToDelete && itemToDelete.fileId) {
-              await storage.deleteFile(
-                  APPWRITE_BUCKET_ID,
-                  itemToDelete.fileId
-              );
-          }
-          
-          showStatus('success', 'Item removed successfully!');
-
-      } catch (error) {
-          console.error("Error deleting item:", error);
-          showStatus('error', 'Failed to remove item. Check console.');
-      }
-  }
-
-  // --- Real-time Updates ---
-  function subscribeToUpdates() {
-      client.subscribe(`databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_COLLECTION_ID}.documents`, response => {
-          if (response.events.includes("databases.*.collections.*.documents.*.create") ||
-              response.events.includes("databases.*.collections.*.documents.*.delete")) {
-              getItems(); 
-          }
-      });
-  }
+    if (file && file.size > MAX_FILE_SIZE) {
+        showStatus('error', `Error: File size is too large. The maximum size allowed is 50MB.`);
+        submitButton.disabled = false;
+        submitButton.textContent = 'Post Item';
+        return; 
+    }
+    // --- End File Size Check ---
 
 
-  // --- Event Listeners and Initial Load ---
+    try {
+        if (file) {
+            // 1. Upload File to Appwrite Storage
+            const uploadedFile = await storage.createFile(
+                APPWRITE_BUCKET_ID,
+                ID.unique(),
+                file
+            );
+            fileId = uploadedFile.$id;
+        }
 
-  // Image Preview
-  photoInput.addEventListener("change", () => {
-    const file = photoInput.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        preview.src = e.target.result;
-        preview.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    } else {
-        preview.style.display = "none";
-    }
-  });
+        // 2. Create Document in Appwrite Database
+        const payload = {
+            name,
+            desc, // FIXED: Using user's confirmed attribute name 'desc'
+            category,
+            fileId: fileId,
+            dat_posted: new Date().toISOString(), // FIXED: Using user's confirmed attribute name 'dat_posted'
+        };
 
-  // Theme Toggle
-  themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    const dark = document.body.classList.contains("dark");
-    themeToggle.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  });
-  
-  // Load saved theme
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  if (savedTheme === 'dark') {
-      document.body.classList.add('dark');
-      themeToggle.textContent = "☀️ Light Mode";
-  } else {
-      themeToggle.textContent = "🌙 Dark Mode";
-  }
+        await databases.createDocument(
+            APPWRITE_DATABASE_ID,
+            APPWRITE_COLLECTION_ID,
+            ID.unique(),
+            payload
+        );
+        
+        showStatus('success', 'Item posted successfully!');
 
-  // Form Submission
-  form.addEventListener("submit", postItem);
+    } catch (error) {
+        console.error("Error posting item:", error);
+        showStatus('error', 'Failed to post item. Check console.');
+    } finally {
+        // Reset form and UI elements
+        form.reset();
+        preview.style.display = "none";
+        photoInput.value = null;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Post Item';
+        getItems(); // Refresh the list
+    }
+  }
+  
+  async function removeItem(itemId) {
+      try {
+          const itemToDelete = items.find(i => i.id === itemId);
 
-  // Search and Filter (trigger a re-fetch and re-render)
-  searchBar.addEventListener("input", getItems);
-  filterCategory.addEventListener("change", getItems);
+          // 1. Delete Document
+          await databases.deleteDocument(
+              APPWRITE_DATABASE_ID,
+              APPWRITE_COLLECTION_ID,
+              itemId
+          );
 
-  // Initial load of items and subscription setup
-  getItems();
-  subscribeToUpdates();
+          // 2. Delete File (Optional, but good practice)
+          if (itemToDelete && itemToDelete.fileId) {
+              await storage.deleteFile(
+                  APPWRITE_BUCKET_ID,
+                  itemToDelete.fileId
+              );
+          }
+          
+          showStatus('success', 'Item removed successfully!');
+
+      } catch (error) {
+          console.error("Error deleting item:", error);
+          showStatus('error', 'Failed to remove item. Check console.');
+      }
+      // Note: No need to call renderItems() here due to real-time subscription
+  }
+
+  // --- Real-time Updates ---
+  function subscribeToUpdates() {
+      client.subscribe(`databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_COLLECTION_ID}.documents`, response => {
+          // Automatically update the item list when a document is created, updated, or deleted
+          if (response.events.includes("databases.*.collections.*.documents.*.create") ||
+              response.events.includes("databases.*.collections.*.documents.*.delete")) {
+              
+              // Only re-fetch and re-render if the change is relevant to the current filters/search
+              // A simpler, more reliable approach for this size app is to re-fetch all items.
+              getItems(); 
+          }
+      });
+  }
+
+
+  // --- Event Listeners and Initial Load ---
+
+  // Image Preview
+  photoInput.addEventListener("change", () => {
+    const file = photoInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    } else {
+        preview.style.display = "none";
+    }
+  });
+
+  // Theme Toggle
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    const dark = document.body.classList.contains("dark");
+    themeToggle.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+  
+  // Load saved theme
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+      themeToggle.textContent = "☀️ Light Mode";
+  } else {
+      themeToggle.textContent = "🌙 Dark Mode";
+  }
+
+  // Form Submission
+  form.addEventListener("submit", postItem);
+
+  // Search and Filter (trigger a re-fetch and re-render)
+  searchBar.addEventListener("input", getItems);
+  filterCategory.addEventListener("change", getItems);
+
+  // Initial load of items and subscription setup
+  getItems();
+  subscribeToUpdates();
 </script>
 </body>
 
