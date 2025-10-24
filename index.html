@@ -412,11 +412,11 @@
           items = response.documents.map(doc => ({
               id: doc.$id,
               name: doc.name,
-              // Using 'description' to match the fixed DB attribute
+              // FIX: Using 'description' to match the database attribute
               desc: doc.description || doc.desc, 
               category: doc.category,
               fileId: doc.fileId,
-              // Using 'datePosted' for display time
+              // FIX: Using 'datePosted'
               time: doc.datePosted || doc.$createdAt, 
           }));
           
@@ -499,7 +499,8 @@
     let fileId = null;
 
     // --- ADDED: 5MB File Size Check ---
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB Limit in Bytes (Adjust if your Appwrite limit is different)
+    // यह Appwrite को भेजने से पहले बड़ी फ़ाइलों को रोकता है।
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB Limit in Bytes (अपने Appwrite बकेट के अनुसार बदलें)
 
     if (file && file.size > MAX_FILE_SIZE) {
         showStatus('error', `फ़ाइल साइज़ बहुत बड़ा है। अधिकतम साइज़ ${MAX_FILE_SIZE / (1024 * 1024)}MB है।`);
@@ -523,10 +524,12 @@
         // 2. Create Document in Appwrite Database
         const payload = {
             name,
-            description: desc, // FIXED: Using 'description' to match Appwrite DB attribute
+            // FIX: 'description' attribute जोड़ा गया
+            description: desc, 
             category,
             fileId: fileId,
-            datePosted: new Date().toISOString(), // FIXED: Added required 'datePosted' attribute
+            // FIX: 'datePosted' attribute जोड़ा गया
+            datePosted: new Date().toISOString(), 
         };
 
         await databases.createDocument(
