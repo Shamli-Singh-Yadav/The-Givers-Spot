@@ -335,12 +335,10 @@
 
 <script>
   // Appwrite Configuration - REPLACE THESE WITH YOUR ACTUAL IDS
-  const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1'; 
+const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1'; 
   const APPWRITE_PROJECT_ID = '68f989ef00266a9a3c42';
   const APPWRITE_DATABASE_ID = '68f98b07003c6a5faf81';
   const APPWRITE_COLLECTION_ID = 'free_items_details_';
-  // FIX: Added the missing APPWRITE_BUCKET_ID here (using the ID from previous context)
-  const APPWRITE_BUCKET_ID = '68faeb91003d29583348'; 
 
   const { Client, Databases, ID, Query, Storage } = Appwrite;
 
@@ -415,11 +413,10 @@
           items = response.documents.map(doc => ({
               id: doc.$id,
               name: doc.name,
-              desc: doc.desc, // FIXED: Using user's specified 'desc' attribute
+              desc: doc.desc,
               category: doc.category,
               fileId: doc.fileId, // Appwrite file ID
-              // FIXED: Using user's specified 'dat_posted' attribute
-              time: doc.dat_posted || doc.$createdAt, 
+              time: doc.$createdAt,
           }));
           
           renderItems();
@@ -501,18 +498,6 @@
     const file = photoInput.files[0];
     let fileId = null;
 
-    // --- NEW FIX: 50MB File Size Check ---
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB Limit in Bytes
-
-    if (file && file.size > MAX_FILE_SIZE) {
-        showStatus('error', `Error: File size is too large. The maximum size allowed is 50MB.`);
-        submitButton.disabled = false;
-        submitButton.textContent = 'Post Item';
-        return; 
-    }
-    // --- End File Size Check ---
-
-
     try {
         if (file) {
             // 1. Upload File to Appwrite Storage
@@ -527,10 +512,9 @@
         // 2. Create Document in Appwrite Database
         const payload = {
             name,
-            desc, // FIXED: Using user's confirmed attribute name 'desc'
+            desc,
             category,
             fileId: fileId,
-            dat_posted: new Date().toISOString(), // FIXED: Using user's confirmed attribute name 'dat_posted'
         };
 
         await databases.createDocument(
@@ -552,7 +536,6 @@
         photoInput.value = null;
         submitButton.disabled = false;
         submitButton.textContent = 'Post Item';
-        getItems(); // Refresh the list
     }
   }
   
