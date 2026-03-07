@@ -377,7 +377,7 @@ const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
   }
 
   function getImageUrl(fileId) {
-      return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/preview?project=${APPWRITE_PROJECT_ID}&quality=75`;
+  return storage.getFilePreview(APPWRITE_BUCKET_ID, fileId);
   }
 
   function formatTime(timestamp) {
@@ -631,4 +631,5 @@ const APPWRITE_BUCKET_ID = '68faeb91003d29583348';
 </body>
 
 </html>
+
 
