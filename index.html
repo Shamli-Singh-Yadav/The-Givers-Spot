@@ -378,7 +378,12 @@ postStatus.style.display='none';
 
 
 function getImageUrl(fileId){
-return storage.getFilePreview(APPWRITE_BUCKET_ID,fileId,200,200).href;
+return storage.getFilePreview(
+APPWRITE_BUCKET_ID,
+fileId,
+200,
+200
+);
 }
 
 
@@ -706,6 +711,7 @@ getItems();
 </body>
 
 </html>
+
 
 
 
